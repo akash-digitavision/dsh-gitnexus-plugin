@@ -12,10 +12,10 @@ From the DSH plugin hub / profile bundles UI, install with the repo URL:
 https://github.com/akash-digitavision/dsh-gitnexus-plugin
 ```
 
-Or via the DSH CLI (depending on your harness build):
+Or via the official DSH CLI (forwards pnpm inside the web profile directory; DSH auto-loads and registers the plugin on startup):
 
 ```
-dsh plugin install https://github.com/akash-digitavision/dsh-gitnexus-plugin
+dsh plugin --profile web add github:akash-digitavision/dsh-gitnexus-plugin
 ```
 
 Then **restart DeepSeek Harness** — every agent and preset on the profile sees the `mcp__gitnexus__*` tools.
