@@ -1,0 +1,37 @@
+# dsh-gitnexus-plugin profile bundle patch: GitNexus MCP server (code intelligence
+# knowledge graph) as a HOST-plane row. After the host restarts, every agent and
+# preset on the profile sees mcp__gitnexus__* tools.
+#
+# GitNexus indexes codebases into knowledge graphs and exposes query/impact/
+# context/explain tools so agents can analyze dependencies, call chains, and
+# execution flows. Index a repo first:
+#
+#   npx gitnexus@latest analyze     # or: gitnexus analyze (global install)
+#
+# Command resolution (stdio row):
+#   1. GITNEXUS_COMMAND environment variable, if set (absolute path to the
+#      gitnexus launcher) — use this when the global shim is not on the DSH
+#      process PATH;
+#   2. otherwise `gitnexus` from PATH — the default after:
+#        npm i -g gitnexus
+#      (requires Node.js >= 20: https://nodejs.org/)
+#
+#   Windows note: npm's global `gitnexus` is a .cmd shim. If the DSH MCP client
+#   cannot spawn it, point GITNEXUS_COMMAND at the shim explicitly:
+#     setx GITNEXUS_COMMAND "%APPDATA%\npm\gitnexus.cmd"
+#   then restart DeepSeek Harness. npx fallback users can set it to
+#   "%APPDATA%\npm\npx.cmd" — args below then need "gitnexus", "mcp" ordering
+#   adjusted (see README).
+#
+# Flags: `mcp` starts the stdio MCP server, which serves ALL indexed repos
+# (multi-repo aware — run `gitnexus analyze` in each repo you want indexed).
+- insert:
+    - id: mcp-gitnexus
+      name: '@deepseek-ai/dsh-mcp-client'
+      config:
+        serverName: gitnexus
+        transport: stdio
+        command: !!js "(process.env.GITNEXUS_COMMAND || 'gitnexus')"
+        args: ['mcp']
+        toolCallTimeoutMs: 120000
+        failOnStartupError: false

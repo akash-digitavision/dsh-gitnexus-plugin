@@ -1,33 +1,39 @@
 {
   "name": "dsh-gitnexus-plugin",
   "version": "1.0.0",
-  "description": "DSH-specific GitNexus plugin for DeepSeek Harness integration",
+  "description": "DeepSeek Harness profile bundle: GitNexus MCP integration — code-intelligence knowledge graph (query, impact, context, explain) over indexed repositories",
+  "type": "module",
   "main": "index.js",
-  "scripts": {
-    "setup": "node scripts/setup.js",
-    "analyze": "node scripts/analyze.js",
-    "mcp": "node scripts/mcp.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "license": "MIT",
+  "files": [
+    "index.js",
+    "cordis.patch.yml",
+    "README.md"
+  ],
+  "exports": {
+    ".": "./index.js",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
   },
   "keywords": [
-    "gitnexus",
-    "deepseek-harness",
     "dsh",
+    "deepseek-harness",
+    "gitnexus",
     "code-intelligence",
+    "knowledge-graph",
     "mcp"
   ],
-  "author": "DeepSeek Harness User",
-  "license": "MIT",
-  "dependencies": {
-    "gitnexus": "^1.6.12"
-  },
-  "devDependencies": {},
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/dsh-gitnexus-plugin.git"
+    "url": "git+https://github.com/akash-digitavision/dsh-gitnexus-plugin.git"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/dsh-gitnexus-plugin/issues"
+    "url": "https://github.com/akash-digitavision/dsh-gitnexus-plugin/issues"
   },
-  "homepage": "https://github.com/yourusername/dsh-gitnexus-plugin#readme"
+  "homepage": "https://github.com/akash-digitavision/dsh-gitnexus-plugin#readme"
 }

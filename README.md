@@ -1,138 +1,73 @@
-# DSH GitNexus Plugin
+# dsh-gitnexus-plugin
 
-A DeepSeek Harness-specific plugin for GitNexus that provides enhanced code intelligence capabilities tailored for DSH workflows.
+DeepSeek Harness (DSH) profile bundle: **GitNexus MCP integration** — indexes codebases into knowledge graphs and exposes `mcp__gitnexus__*` tools so agents can analyze dependencies, call chains, and execution flows with architectural clarity.
 
-## Features
+Built on [GitNexus](https://github.com/abhigyanpatwari/GitNexus).
 
-- 🔍 Deep code dependency analysis
-- 📊 Execution flow tracing
-- ⚡ Impact analysis before code changes
-- 🔧 Refactoring assistance with graph awareness
-- 🐛 Debugging with call graph traversal
-- 📈 Architecture exploration and visualization
+## Install via repo URL
 
-## Installation
+From the DSH plugin hub / profile bundles UI, install with the repo URL:
 
-### Option 1: Install from GitHub (Recommended)
-
-```bash
-npm install -g https://github.com/yourusername/dsh-gitnexus-plugin.git
+```
+https://github.com/akash-digitavision/dsh-gitnexus-plugin
 ```
 
-### Option 2: Install from local directory
+Or via the DSH CLI (depending on your harness build):
 
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/dsh-gitnexus-plugin.git
-cd dsh-gitnexus-plugin
-
-# Install dependencies
-npm install
-
-# Link globally for development
-npm link
+```
+dsh plugin install https://github.com/akash-digitavision/dsh-gitnexus-plugin
 ```
 
-## Usage
+Then **restart DeepSeek Harness** — every agent and preset on the profile sees the `mcp__gitnexus__*` tools.
 
-### Setup DSH Workspace
+## Prerequisites
 
-```bash
-dsh-gitnexus setup
+| Requirement | Install | Notes |
+| --- | --- | --- |
+| Node.js ≥ 20 | https://nodejs.org/ | Required by GitNexus |
+| GitNexus CLI (recommended) | `npm i -g gitnexus` | Fastest MCP startup — no `npx` cold-cache delay |
+
+The bundle spawns the GitNexus stdio MCP server (`gitnexus mcp`), which serves **all** indexed repos. Index any repo you want queryable:
+
 ```
-
-### Analyze DSH Codebase
-
-```bash
-dsh-gitnexus analyze
-```
-
-### Start MCP Server
-
-```bash
-dsh-gitnexus mcp
-```
-
-### Check Status
-
-```bash
-dsh-gitnexus status
-```
-
-## DSH-Specific Commands
-
-The plugin includes DSH-tailored commands:
-
-```bash
-# Analyze with DSH-optimized settings
-dsh-gitnexus analyze --dsh-optimized
-
-# Generate DSH architecture report
-dsh-gitnexus report --architecture
-
-# Check DSH plugin compatibility
-dsh-gitnexus check --dsh-plugins
+cd your-repo
+gitnexus analyze        # or: npx gitnexus@latest analyze
 ```
 
 ## Configuration
 
-Create a `dsh-gitnexus.config.js` file in your DSH workspace root:
+Command resolution for the MCP row:
 
-```javascript
-module.exports = {
-  // DSH-specific analysis settings
-  dsh: {
-    // Skip analysis of certain DSH internal files
-    skipInternal: true,
-    
-    // Focus on agent skills and tools
-    focusAgents: true,
-    
-    // Enhanced debugging for DSH workflows
-    debugEnhancements: true,
-    
-    // Custom file patterns for DSH
-    filePatterns: [
-      "**/*.js",
-      "**/*.ts",
-      "**/*.py",
-      "!**/node_modules/**",
-      "!**/.git/**"
-    ]
-  },
-  
-  // GitNexus standard settings
-  gitnexus: {
-    // Your GitNexus configuration here
-  }
-};
+1. `GITNEXUS_COMMAND` env var (absolute path to the `gitnexus` launcher) — takes precedence;
+2. otherwise `gitnexus` from `PATH`.
+
+**Windows note:** npm's global `gitnexus` is a `.cmd` shim. If the MCP client cannot spawn it, pin it explicitly and restart DSH:
+
+```
+setx GITNEXUS_COMMAND "%APPDATA%\npm\gitnexus.cmd"
 ```
 
-## Integration with DSH Tools
+## Tools exposed
 
-This plugin works seamlessly with other DSH MCP servers:
+| Tool | Use for |
+| --- | --- |
+| `query` | Concept / execution-flow search across the graph |
+| `context` | Full context for a named symbol |
+| `impact` | Blast radius before editing a symbol (callers, processes, risk) |
+| `explain` | Taint findings & structural explanation of a file/symbol |
+| `detect_changes` | Graph change analysis before committing |
+| `rename` | Call-graph-aware symbol rename |
 
-- 🔗 `dsh-context7` - For up-to-date documentation
-- 🎭 `dsh-playwright` - For browser automation testing
-- 🤖 `dsh-serena` - For symbolic code navigation
-- 🌐 `dsh-agent-reach` - For web search and content fetching
+Exact surface depends on your GitNexus version (`gitnexus --version`). Resources such as `gitnexus://repo/<name>/context`, `/clusters`, `/processes` are also served per indexed repo.
 
-## Development
+## What this bundle does
 
-To contribute to this plugin:
+`cordis.patch.yml` inserts one HOST-plane row:
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+- `mcp-gitnexus` → `@deepseek-ai/dsh-mcp-client`, `transport: stdio`, `command: gitnexus`, `args: ['mcp']`, 120 s tool timeout, non-fatal on startup error (the server simply stays absent if GitNexus is not installed).
+
+`index.js` is a behaviour-free resolvable entry shim satisfying the DSH plugin-spec check — configuration is supplied entirely by the patch file.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Acknowledgments
-
-- Built upon [GitNexus](https://github.com/abhigyanpatwari/GitNexus) - the original code intelligence platform
-- DeepSeek Harness team for the DSH ecosystem
-- Open source community for MCP standards
+MIT — see [LICENSE](LICENSE).
