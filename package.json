@@ -1,0 +1,33 @@
+{
+  "name": "dsh-gitnexus-plugin",
+  "version": "1.0.0",
+  "description": "DSH-specific GitNexus plugin for DeepSeek Harness integration",
+  "main": "index.js",
+  "scripts": {
+    "setup": "node scripts/setup.js",
+    "analyze": "node scripts/analyze.js",
+    "mcp": "node scripts/mcp.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "gitnexus",
+    "deepseek-harness",
+    "dsh",
+    "code-intelligence",
+    "mcp"
+  ],
+  "author": "DeepSeek Harness User",
+  "license": "MIT",
+  "dependencies": {
+    "gitnexus": "^1.6.12"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/dsh-gitnexus-plugin.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/dsh-gitnexus-plugin/issues"
+  },
+  "homepage": "https://github.com/yourusername/dsh-gitnexus-plugin#readme"
+}
